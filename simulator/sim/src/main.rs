@@ -1,6 +1,7 @@
 // Luke Anglin and Tobi Solarin
 use rand::prelude::*; // For the rng
 const N: usize = 1_000; // The number of trials
+
 /// Monte-Carlo simulation function
 /// # Parameters
 ///
@@ -8,12 +9,18 @@ const N: usize = 1_000; // The number of trials
 ///
 /// # Return Value
 ///
-///
+/// Array of the results
 ///
 /// # Example
 /// ```rust
-/// println("Hello")
+/// fn main() {
+///     let result: [f64; 1000] = simulate();
+///     for elem in 0..result.len() {
+///         println!("{}", result[elem]);
+///     }
+/// }
 /// ```
+
 fn simulate() -> [f64; 1_000] {
     // Array initialization
     let mut w_final: [f64; N] = [0.0; 1_000];
@@ -59,9 +66,82 @@ fn simulate() -> [f64; 1_000] {
     return w_final;
 }
 
-fn main() {
-    let result: [f64; 1000] = simulate();
-    for elem in 0..result.len() {
-        println!("{}", result[elem]);
+fn q1(result: &[f64]) -> f64 {
+    // Takes an f64 array
+    let end = result.len() / 2; // End index
+    let start = result.len() / 4; // Start index
+    let mut mean: f64 = 0.0; 
+    for val in result[start..end].iter() {
+       mean += val;
     }
+    let avg = mean / (start as f64); 
+    return avg; 
+}
+
+fn q3(result: &[f64]) -> f64 {
+    // Takes an f64 array
+    let end = result.len() / 2 + result.len() / 4; // End index
+    let start = result.len() / 2; // Start index
+    let mut mean: f64 = 0.0; 
+    for val in result[start..end].iter() {
+       mean += val;
+    }
+    let avg = mean / (start as f64); 
+    return avg; 
+}
+
+fn mean(result: &[f64]) -> f64 {
+    let mut mean: f64 = 0.0;
+    for val in result[0..result.len()].iter() {
+        mean+=val;
+    }
+    mean = mean / (result.len() as f64);
+    return mean; 
+}
+
+
+fn main() {
+    let mut result: [f64; 1000] = simulate();
+    result.sort_by(|a, b| a.partial_cmp(b).unwrap()); // Sorts array inplace
+    let q1 = q1(&result);
+    println!("Q1: {}", q1); 
+    let q3 = q3(&result);
+    println!("Q3: {}", q3); 
+    let mean = mean(&result);
+    println!("Mean: {}", mean); 
+    let median = result[500];
+    println!("Median: {}", median);
+    let mut w15 = 0.0; 
+    let mut w20 = 0.0; 
+    let mut w30 = 0.0; 
+    let mut w40 = 0.0; 
+    // let mut w5 = 0.0; 
+    // let mut w6 = 0.0; 
+    // let mut w7 = 0.0; 
+
+    // the first four 
+    for val in result.iter() {
+        if val <= &15.0 {
+            w15 += 1.0;
+        }
+        if val <= &20.0 {
+            w20 += 1.0; 
+        }
+        if val <= &30.0 {
+            w30 += 1.0;
+        }
+        if val > &40.0 {
+            w40 += 1.0; 
+        }
+    }
+    w15 /= 1000.0;
+    w20 /= 1000.0;
+    w30 /= 1000.0;
+    w40 /= 1000.0;
+
+    println!("W15: {}", w15);
+    println!("W20: {}", w20);
+    println!("W30: {}", w30);
+    println!("W40: {}", w40);
+
 }

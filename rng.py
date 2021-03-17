@@ -21,4 +21,10 @@ def rng(x):
         return 1000
 
     else:
-        return (((a * rng(x-1) + c) % K)/K)
+        return (a * rng(x-1) + c) % K
+
+
+print(rng(51)/K)
+print(rng(52)/K)
+print(rng(53)/K)
+

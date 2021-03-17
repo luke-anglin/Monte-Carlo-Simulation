@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["main",""],["simulate","Monte-Carlo simulation function"]]});
+initSidebarItems({"constant":[["N",""]],"fn":[["main",""],["simulate","Monte-Carlo simulation function"]]});
