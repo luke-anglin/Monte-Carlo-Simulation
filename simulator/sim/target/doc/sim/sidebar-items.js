@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["main",""],["simulate","Monte-Carlo simulation function"]]});
