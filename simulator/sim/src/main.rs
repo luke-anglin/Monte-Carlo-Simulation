@@ -1,6 +1,20 @@
 // Luke Anglin and Tobi Solarin
-use rand::prelude::*; // For the rng
 const N: usize = 1_000; // The number of trials
+
+
+
+fn rng(x: usize) -> usize {
+    let a = 24693; 
+    let c = 1753;
+    let k = 2u32.pow(15);
+    if x==0 {
+        return 1000; 
+    }
+
+    else {
+        return (a * rng(x-1) + c) % (k as usize)
+    }
+}
 
 /// Monte-Carlo simulation function
 /// # Parameters
@@ -33,8 +47,7 @@ fn simulate() -> [f64; 1_000] {
         while c < 4 {
             // Begin at the root of the tree.
             // Get a random number
-            let mut rng = thread_rng();
-            let rand: f64 = rng.gen();
+            let rand: f64 = (rng(sim+1) as f64) / 2u32.pow(15) as f64;
             // Add 6 for call time
             w += 6f64;
             // Cases:
@@ -52,10 +65,18 @@ fn simulate() -> [f64; 1_000] {
                 continue;
             }
 
-            // They're available
+            // They ansewr
             if rand > 0.5 {
-                w += -12f64 * (1.0f64 - rand).ln(); // This is a continuous, exponential random variable.
-                break;
+                c+=1;
+                let t = -12f64 * (1.0f64 - rand).ln(); // This is a continuous, exponential random variable.
+                if t > 25f64 {
+                    w += 26.0;
+                    continue;
+                }
+                else {
+                    w+=t;
+                    break;
+                }
             }
         }
 
@@ -74,7 +95,7 @@ fn q1(result: &[f64]) -> f64 {
     for val in result[start..end].iter() {
         mean += val;
     }
-    let avg = mean / (start as f64);
+    let avg = mean / ((end - start) as f64);
     return avg;
 }
 
@@ -86,7 +107,7 @@ fn q3(result: &[f64]) -> f64 {
     for val in result[start..end].iter() {
         mean += val;
     }
-    let avg = mean / (start as f64);
+    let avg = mean / ((end - start) as f64);
     return avg;
 }
 
