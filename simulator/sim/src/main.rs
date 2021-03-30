@@ -1,18 +1,16 @@
 // Luke Anglin and Tobi Solarin
+use rand::Rng;
 const N: usize = 1_000; // The number of trials
-
-
+use std::io::Write;
 
 fn rng(x: usize) -> usize {
-    let a = 24693; 
+    let a = 24693;
     let c = 1753;
     let k = 2u32.pow(15);
-    if x==0 {
-        return 1000; 
-    }
-
-    else {
-        return (a * rng(x-1) + c) % (k as usize)
+    if x == 0 {
+        return 1000;
+    } else {
+        return (a * rng(x - 1) + c) % (k as usize);
     }
 }
 
@@ -38,6 +36,7 @@ fn rng(x: usize) -> usize {
 fn simulate() -> [f64; 1_000] {
     // Array initialization
     let mut w_final: [f64; N] = [0.0; 1_000];
+    let mut sims = 0; 
     // Loop through n times
     for sim in 0..N {
         // Initialize global variables
@@ -45,9 +44,10 @@ fn simulate() -> [f64; 1_000] {
         let mut c = 0; // The total calls so far
                        // We only do this while the calls is < 4
         while c < 4 {
+            sims= sims+1;
             // Begin at the root of the tree.
             // Get a random number
-            let rand: f64 = (rng(sim+1) as f64) / 2u32.pow(15) as f64;
+            let rand: f64 = (rng(sims) as f64) / 2u32.pow(15) as f64;
             // Add 6 for call time
             w += 6f64;
             // Cases:
@@ -67,14 +67,15 @@ fn simulate() -> [f64; 1_000] {
 
             // They ansewr
             if rand > 0.5 {
-                c+=1;
-                let t = -12f64 * (1.0f64 - rand).ln(); // This is a continuous, exponential random variable.
+                c += 1;
+                let mut rng = rand::thread_rng();
+
+                let t = -12f64 * (1.0f64 - rng.gen::<f64>()).ln(); // This is a continuous, exponential random variable.
                 if t > 25f64 {
                     w += 26.0;
                     continue;
-                }
-                else {
-                    w+=t;
+                } else {
+                    w += t;
                     break;
                 }
             }
@@ -153,24 +154,23 @@ fn main() {
         if val > &40.0 {
             w40 += 1.0;
         }
-        if val > &result[750] {
+        if val > &45.0 {
             w5 += 1.0;
         }
-        if val > &result[850] {
+        if val > &55.0 {
             w6 += 1.0;
         }
-        if val > &result[900] {
+        if val > &70.0 {
             w7 += 1.0;
         }
-        
     }
     w15 /= 1000.0;
     w20 /= 1000.0;
     w30 /= 1000.0;
     w40 /= 1000.0;
-    w5 /= 1000.0; 
-    w6 /= 1000.0; 
-    w7 /= 1000.0; 
+    w5 /= 1000.0;
+    w6 /= 1000.0;
+    w7 /= 1000.0;
 
     println!("W15: {}", w15);
     println!("W20: {}", w20);
@@ -179,4 +179,12 @@ fn main() {
     println!("W5: {}", w5);
     println!("W6: {}", w6);
     println!("W7: {}", w7);
+    let mut output = String::new();
+    for val in result.iter() {
+        let s: String = val.to_string() + "\n";
+        output.push_str(&s);
+    }
+    let mut file = std::fs::File::create("results.txt").expect("Create failed");
+    file.write_all(output.as_bytes()).expect("Write failed");
+    println!("Data written to file results.txt in the the current working dir");
 }
